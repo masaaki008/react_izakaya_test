@@ -34,7 +34,7 @@ export default class App extends Component<{}> {
     return (
       <View style={styles.container}>
         <TouchableOpacity style={{marginTop: 50}} onPress={() => this.onPressFetch()} >
-          <Text>aaaaEbisu area</Text>
+          <Text>Ebisu area</Text>
         </TouchableOpacity>
         <FlatList
           data={this.state.rest}
