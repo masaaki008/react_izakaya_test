@@ -1,9 +1,9 @@
 /**
- * Sample React Native App
- * https://github.com/facebook/react-native
+ * Home画面のjsファイル
+ * 
  *
- * @format
- * @flow
+ * 
+ * 
  */
 
 import React, { Component } from 'react';
