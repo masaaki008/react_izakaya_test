@@ -39,7 +39,20 @@ export default class App extends Component<{}> {
                 </TouchableOpacity>
                 <FlatList
                     data={this.state.rest}
-                    renderItem={({ item }) => <Text>{item.name}</Text>}
+                    renderItem={({ item }) =>
+                        <View>
+                            <Text style={{ padding:30 }}>{item.name}</Text>
+                            <Text>{item.address}</Text>
+                            <Image
+                                style={{ width:100, height: 100}}
+                                source={{ uri: item.image_url.shop_image1 }}
+                            />
+                            <Image
+                                style={{ width: 100, height: 100 }}
+                                source={{ uri: item.image_url.shop_image2 }}
+                            />
+                        </View>
+                    }
                     keyExtractor={(item) => item.id}
                 />
             </View>
