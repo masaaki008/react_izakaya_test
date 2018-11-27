@@ -51,14 +51,49 @@ class NoMoreCards extends React.Component {
     }
 }
 
+async function getCurrentPosition(timeoutMillis = 10000) {
+    if(Platform.OS === "android"){
+        const ok = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+        if(!ok){
+            const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+            if(granted !== PermissionsAndroid.RESULTS.GRANTED){
+                throw new Error();
+            }
+        }
+    }
+
+    return new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: timeoutMillis });
+    });
+}
+
 export default class App extends Component<{}> {
-    state = {
-        rest: [],
-        outOfCards: false
+    constructor(props) {
+        super(props);
+        this.state = {
+            rest: [],
+            coords: null,
+            outOfCards: false
+        }
+    }
+
+    async componentDidMount() {
+        try{
+            const position = await getCurrentPosition(5000);
+            const { latitude, longitude } = position.coords;
+            this.setState({
+                coords: {
+                    latitude,
+                    longitude
+                }
+            })
+        } catch(e) {
+            alert(e.message)
+        }
     }
 
     onPressFetch() {
-        fetch('https://api.gnavi.co.jp/RestSearchAPI/v3/?keyid=6787814f9abbc023c7ea729f3f2876bc&areacode_m=AREAM2178')
+        fetch(`https://api.gnavi.co.jp/RestSearchAPI/v3/?keyid=6787814f9abbc023c7ea729f3f2876bc&latitude=${this.state.coords.latitude}&longitude=${this.state.coords.longitude}&range=5&hit_per_page=20`)
             .then(response => response.json())
             .then(({ rest }) => this.setState({ rest }));
     }
@@ -87,7 +122,7 @@ export default class App extends Component<{}> {
         return (
             <View style={styles.container}>
                 <TouchableOpacity style={{ marginTop: 50 }} onPress={() => this.onPressFetch()} >
-                    <Text>Get Ebisu area</Text>
+                    <Text>Get Area Info</Text>
                 </TouchableOpacity>
                 <SwipeCards
                     cards={this.state.rest}
@@ -102,6 +137,8 @@ export default class App extends Component<{}> {
                     handleNope={this.handleNope}
                     cardRemoved={this.cardRemoved.bind(this)}
                 />
+                <View style={{ height: 8 }} />
+                {this.state.coords ? <Text>here: {this.state.coords.latitude}, {this.state.coords.longitude}</Text> : null}
             </View>
         );
     }
