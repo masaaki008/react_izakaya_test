@@ -85,7 +85,7 @@ export default class App extends Component<{}> {
                 coords: {
                     latitude,
                     longitude
-                }
+                }git 
             })
         } catch(e) {
             alert(e.message)
